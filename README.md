@@ -57,3 +57,15 @@ terraform init && terraform plan && terraform apply
 ## License
 
 MIT — use for any personal or commercial project.
+
+## Get the Premium Version
+
+**$19** — DevOps Automation Scripts (Premium)
+
+The premium version includes everything in the free tier plus:
+
+- ✅ **Priority support** — Get direct help when you're stuck
+- ✅ **Lifetime updates** — All future improvements, free forever
+- ✅ **Example configurations** — Production-grade Terraform modules, multi-environment GitHub Actions workflows, Helm charts, and monitoring/alerting setups
+
+[🛒 Buy on Gumroad →](https://gum.co/devops-automation-scripts)
