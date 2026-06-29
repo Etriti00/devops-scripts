@@ -1,0 +1,68 @@
+# ─── GitHub Actions: Deploy to Production ─────────────────────────────────────
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to deploy"
+        required: true
+      confirm:
+        description: "Type 'DEPLOY' to confirm"
+        required: true
+
+env:
+  REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  IMAGE_NAME: webapp
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'DEPLOY'
+    steps:
+      - run: echo "Deploying version ${{ github.event.inputs.version }}"
+
+  deploy:
+    needs: approve
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Pull & Deploy
+        run: |
+          IMAGE=${{ steps.ecr.outputs.registry }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}
+          echo "Deploying $IMAGE to production..."
+          
+          # Update Kubernetes deployment
+          kubectl set image deployment/app-deployment webapp=$IMAGE \
+            --namespace=production \
+            --kubeconfig=$KUBE_CONFIG
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/app-deployment \
+            --namespace=production \
+            --timeout=300s
+
+      - name: Notify Slack
+        if: always()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": "${{ job.status == 'success' && '✅' || '❌' }} Production deploy ${{ github.event.inputs.version }}: ${{ job.status }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
