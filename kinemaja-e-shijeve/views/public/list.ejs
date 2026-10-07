@@ -1,0 +1,42 @@
+<%- include('../partials/head') %>
+
+<section class="page-head">
+  <div class="wrap">
+    <div class="icon" aria-hidden="true"><%= icon %></div>
+    <span class="kicker"><%= kicker %></span>
+    <h1><%= heading %></h1>
+    <% if (recipes.length) { %>
+      <p><%= recipes.length === 1 ? 'Një recetë' : `${recipes.length} receta` %></p>
+    <% } %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <% if (recipes.length) { %>
+      <div class="tickets">
+        <% recipes.forEach(function (r) { %><%- include('../partials/ticket', { r: r }) %><% }) %>
+      </div>
+    <% } else if (kicker === 'Kërkimi' && query) { %>
+      <div class="empty">
+        <div class="empty-icon" aria-hidden="true">🍽️</div>
+        <h3>Nuk gjetëm asnjë recetë për „<%= query %>”</h3>
+        <p>Provoni një fjalë tjetër — për shembull emrin e një përbërësi, si „spinaq” ose „mollë”.</p>
+      </div>
+    <% } else if (kicker === 'Kërkimi') { %>
+      <div class="empty">
+        <div class="empty-icon" aria-hidden="true">🔎</div>
+        <h3>Shkruani emrin e një gjelle ose të një përbërësi</h3>
+        <p>Përdorni kutinë e kërkimit lart.</p>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty-icon" aria-hidden="true">🎞️</div>
+        <h3>Ky zhanër s’ka ende shfaqje</h3>
+        <p>Recetat e para të këtij lloji janë ende në kuzhinë. Ndërkohë, shihni <a href="/">gjithë repertorin</a>.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

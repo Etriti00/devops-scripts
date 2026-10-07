@@ -1,0 +1,39 @@
+<%- include('_head', { bodyClass: 'auth' }) %>
+
+<div class="auth-card wide">
+  <div class="auth-head">
+    <div class="sign">Mirë se erdhe!</div>
+    <p>Ky është blogu yt. Le ta përgatisim bashkë — duhen vetëm tri gjëra.</p>
+  </div>
+
+  <% if (error) { %><div class="error" role="alert"><%= error %></div><% } %>
+
+  <form method="post" action="/paneli/fillimi">
+    <label class="field">
+      <span class="label">1. Si të quajnë lexuesit?</span>
+      <span class="help">Ky emër shfaqet poshtë recetave dhe te faqja „Rreth meje”. P.sh. thjesht emri yt, ose „Nëna Lule”.</span>
+      <input type="text" name="authorName" value="<%= values.authorName || '' %>" maxlength="60" required autofocus>
+    </label>
+    <label class="field">
+      <span class="label">2. Zgjidh një emër përdoruesi</span>
+      <span class="help">Me këtë emër do të hysh në panel. Diçka e shkurtër dhe e lehtë për t’u mbajtur mend.</span>
+      <input type="text" name="username" value="<%= values.username || '' %>" maxlength="40" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+    </label>
+    <div class="field">
+      <span class="label">3. Zgjidh një fjalëkalim</span>
+      <span class="help">Të paktën 6 shenja. Shkruaje edhe në një fletore, që të mos e harrosh.</span>
+      <div class="grid-2">
+        <label class="field pw-wrap">
+          <input type="password" name="password" autocomplete="new-password" placeholder="Fjalëkalimi" aria-label="Fjalëkalimi" required minlength="6">
+          <button type="button" class="pw-toggle" data-pw-toggle>👁 Shfaqe</button>
+        </label>
+        <label class="field">
+          <input type="password" name="password2" autocomplete="new-password" placeholder="Shkruaje edhe një herë" aria-label="Fjalëkalimi edhe një herë" required minlength="6">
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-big" type="submit">Hape kuzhinën 🎬</button>
+  </form>
+</div>
+
+<%- include('_foot') %>

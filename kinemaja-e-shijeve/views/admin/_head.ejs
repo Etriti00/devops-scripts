@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="sq" class="text-<%= settings.textSize %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title><%= title %> · Paneli · <%= settings.blogName %></title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..700&family=Limelight&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? ' ' + bodyClass : '' %>">
+<% if (user) { %>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="logo" href="/paneli"><span class="logo-sign"><%= settings.blogName %></span><span class="logo-sub">Paneli im</span></a>
+    <nav class="nav" aria-label="Menyja e panelit">
+      <a href="/paneli" class="<%= path === '/paneli' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">🏠</span>Ballina</a>
+      <a href="/paneli/receta/e-re" class="<%= path === '/paneli/receta/e-re' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">✍️</span>Recetë e re</a>
+      <a href="/paneli/receta" class="<%= path === '/paneli/receta' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">📖</span>Recetat</a>
+      <a href="/paneli/komentet" class="<%= path === '/paneli/komentet' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">💬</span>Komentet<% if (typeof newComments !== 'undefined' && newComments) { %><span class="badge"><%= newComments %></span><% } %></a>
+      <a href="/paneli/pa-duhan" class="<%= path === '/paneli/pa-duhan' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">🌿</span>Pa duhan</a>
+      <a href="/paneli/cilesimet" class="<%= path === '/paneli/cilesimet' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">⚙️</span>Cilësimet</a>
+      <a href="/paneli/ndihme" class="<%= path === '/paneli/ndihme' ? 'is-active' : '' %>"><span class="ico" aria-hidden="true">❓</span>Ndihmë</a>
+    </nav>
+    <div class="topbar-tools">
+      <form method="post" action="/paneli/cilesimet/shkronjat" class="textsize" aria-label="Madhësia e shkronjave">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <span>Shkronjat:</span>
+        <button name="textSize" value="normal" class="<%= settings.textSize === 'normal' ? 'is-on' : '' %>" title="Normale" style="font-size:.85rem">A</button>
+        <button name="textSize" value="madhe" class="<%= settings.textSize === 'madhe' ? 'is-on' : '' %>" title="Të mëdha" style="font-size:1.05rem">A</button>
+        <button name="textSize" value="shume-madhe" class="<%= settings.textSize === 'shume-madhe' ? 'is-on' : '' %>" title="Shumë të mëdha" style="font-size:1.3rem">A</button>
+      </form>
+      <a class="tool-btn" href="/" target="_blank" rel="noopener">👀 Shiko blogun</a>
+      <form method="post" action="/paneli/dil">
+        <button class="tool-btn" type="submit">🚪 Dil</button>
+      </form>
+    </div>
+  </div>
+</header>
+<% } %>
+<main class="page">
+<% if (typeof flash !== 'undefined' && flash) { %>
+  <div class="flash flash-<%= flash.type %>" role="status" data-flash>
+    <span class="flash-ico" aria-hidden="true"><%= flash.type === 'celebrate' ? '🎉' : flash.type === 'success' ? '✅' : 'ℹ️' %></span>
+    <span><%= flash.text %></span>
+    <button type="button" class="flash-x" aria-label="Mbyll" data-close>×</button>
+  </div>
+<% } %>

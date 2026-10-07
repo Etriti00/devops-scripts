@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+
+<section class="page-head">
+  <div class="wrap">
+    <span class="kicker">Rreth meje</span>
+    <h1><%= settings.authorName ? `Unë jam ${settings.authorName}` : 'Mirë se erdhët' %></h1>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="about">
+    <figure class="polaroid">
+      <div class="ph">
+        <% if (settings.aboutPhoto) { %>
+          <img src="/foto/<%= settings.aboutPhoto %>" alt="<%= settings.authorName || 'Autorja' %>">
+        <% } else { %>
+          <div class="poster-fallback"><div><div class="poster-icon" aria-hidden="true">👩‍🍳</div><div class="poster-title">Shkup · Kuzhina · Kinema</div></div></div>
+        <% } %>
+      </div>
+      <figcaption><%= settings.authorName || 'Në kuzhinën time' %></figcaption>
+    </figure>
+
+    <div>
+      <div class="about-text"><%- h.paragraphs(settings.aboutText) %></div>
+      <div class="about-stats">
+        <div><strong><%= recipesCount %></strong><span>receta në repertor</span></div>
+        <div><strong>Shkup</strong><span>aty ku nisi gjithçka</span></div>
+        <div><strong>🎬</strong><span>dashuria për kinemanë</span></div>
+      </div>
+      <p style="margin-top:32px"><a class="btn" href="/">Shiko recetat</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/foot') %>

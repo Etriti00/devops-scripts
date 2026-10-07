@@ -1,0 +1,115 @@
+<%- include('_head') %>
+
+<div class="page-title">
+  <div>
+    <h1>Rruga ime pa duhan 🌿</h1>
+    <p>Ky kënd është vetëm për ty. Lexuesit nuk e shohin, përveç nëse e zgjedh vetë.</p>
+  </div>
+</div>
+
+<% if (!stats) { %>
+  <section class="marquee">
+    <div class="big-label">SHFAQJA E RE</div>
+    <div class="big-num" style="font-size:clamp(2.6rem,8vw,4.5rem);margin:14px 0">Pa duhan</div>
+    <p class="quote">Çdo film i bukur fillon me një skenë të parë. Kjo është e jotja.</p>
+  </section>
+
+  <form class="card" method="post" action="/paneli/pa-duhan">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" name="action" value="start">
+    <input type="hidden" name="quitIso" value="" data-quit-iso>
+    <h2>Kur e le (ose kur do ta lësh) duhanin?</h2>
+    <p class="help">Nëse e ke lënë sot, mos ndrysho asgjë — thjesht kliko butonin.</p>
+    <div class="grid-2">
+      <label class="field"><span class="label">Data</span><input type="date" name="quitDate" data-now-date></label>
+      <label class="field"><span class="label">Ora</span><input type="time" name="quitTime" data-now-time></label>
+    </div>
+    <button class="btn btn-big btn-olive" type="submit">🌿 Fillo numërimin</button>
+  </form>
+<% } else { %>
+  <section class="marquee">
+    <div class="big-num" data-live-days data-since="<%= smoke.quitDate %>"><%= stats.days %></div>
+    <div class="big-label">DITË PA DUHAN</div>
+    <div class="sub" data-live-clock>dhe <%= stats.hours %> orë</div>
+    <p class="quote">„<%= h.encouragement() %>”</p>
+  </section>
+
+  <button type="button" class="btn btn-gold craving-btn" data-craving>🫁 Më erdhi dëshira — më ndihmo tani</button>
+
+  <div class="journey-stats">
+    <div class="stat"><strong><%= h.number(stats.avoided) %></strong><span>cigare të pandezura</span></div>
+    <div class="stat"><strong><%= h.number(stats.saved, stats.saved < 100 ? 2 : 0) %> <%= settings.currency %></strong><span>të kursyera — për përbërës të mirë!</span></div>
+    <div class="stat"><strong data-cravings><%= smoke.cravingsBeaten || 0 %></strong><span>dëshira të mposhtura 💪</span></div>
+  </div>
+
+  <% if (stats.next) { %>
+    <div class="next-up">
+      <h3>Hapi i radhës: <%= stats.next.label %></h3>
+      <p><%= stats.next.text %> <b>Edhe <%= h.friendlyRemaining(stats.timeToNext) %>.</b></p>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= Math.round(stats.progress) %>" aria-label="Sa ke ecur drejt hapit të radhës"><i style="width:<%= stats.progress.toFixed(1) %>%"></i></div>
+    </div>
+  <% } %>
+
+  <div class="card">
+    <h2>Çfarë po ndodh në trupin tënd</h2>
+    <ul class="milestones">
+      <% stats.milestones.forEach(function (m) { %>
+        <li class="<%= m.done ? 'done' : '' %>">
+          <span class="m-ico" aria-hidden="true"><%= m.done ? '✅' : '⏳' %></span>
+          <span class="m-when"><%= m.label %></span>
+          <span class="m-text"><%= m.text %></span>
+        </li>
+      <% }) %>
+    </ul>
+    <p class="help" style="margin-top:14px">Këto janë afate të përgjithshme nga Organizata Botërore e Shëndetësisë dhe mjekë të ndryshëm. Çdo trup është pak më ndryshe.</p>
+  </div>
+<% } %>
+
+<form class="card" method="post" action="/paneli/pa-duhan">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <input type="hidden" name="action" value="settings">
+  <h2>Të dhënat e mia</h2>
+  <p class="help">Përdoren vetëm për të llogaritur sa cigare dhe sa para ke kursyer.</p>
+  <div class="grid-3">
+    <label class="field"><span class="label">Sa cigare pije në ditë?</span><input type="number" name="perDay" min="1" max="100" value="<%= smoke.perDay %>"></label>
+    <label class="field"><span class="label">Sa cigare ka një paketë?</span><input type="number" name="packSize" min="1" max="50" value="<%= smoke.packSize %>"></label>
+    <label class="field"><span class="label">Sa kushton një paketë? (<%= settings.currency %>)</span><input type="text" inputmode="decimal" name="packPrice" value="<%= String(smoke.packPrice).replace('.', ',') %>"></label>
+  </div>
+  <label class="field" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer">
+    <input type="checkbox" name="showOnBlog" value="1" <%= smoke.showOnBlog ? 'checked' : '' %> style="width:1.4rem;height:1.4rem;margin-top:3px;accent-color:var(--olive)">
+    <span><b>Shfaqe numrin e ditëve edhe në blog</b><br><span class="help" style="margin:0">Lexuesit do të shohin një shënim të vogël në ballinë, p.sh. „30 ditë pa duhan”. Mund ta heqësh kur të duash.</span></span>
+  </label>
+  <button class="btn" type="submit">Ruaj</button>
+</form>
+
+<% if (stats) { %>
+  <form class="card" method="post" action="/paneli/pa-duhan" data-confirm="Numëruesi do të nisë nga e para. Mos u mërzit — shumica e njerëzve ia dalin pas disa përpjekjesh. Çdo përpjekje të afron më shumë." data-confirm-yes="Po, fillo nga e para" data-confirm-title="Fillim i ri?">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" name="action" value="restart">
+    <h2>Ndodhi një rrëshqitje?</h2>
+    <p class="help">Asnjë hap prapa nuk e fshin rrugën që ke bërë. Nëse ke ndezur një cigare, mund ta nisësh numërimin sërish — pa faj, pa turp.</p>
+    <button class="btn btn-ghost" type="submit">🔄 Fillo sërish nga sot</button>
+  </form>
+<% } %>
+
+<div class="breathe-backdrop" data-breathe hidden>
+  <div class="breathe" role="dialog" aria-modal="true" aria-labelledby="br-title">
+    <h2 id="br-title">Merr frymë me mua</h2>
+    <p>Dëshira zgjat vetëm pak minuta. Ndiq rrethin.</p>
+    <div class="breathe-circle" data-circle>Merr frymë…</div>
+    <div class="timer" data-timer>2:00</div>
+    <div data-after hidden>
+      <h2>E mposhte! 💪</h2>
+      <p>Edhe një dëshirë më pak. Tani bëj diçka të mirë për veten:</p>
+      <ul class="ideas">
+        <li>💧 Pi një gotë ujë të freskët</li>
+        <li>🍎 Ha një frut ose një grusht arra</li>
+        <li>✍️ Shkruaj një recetë të re — duart e zëna e harrojnë cigaren</li>
+        <li>📞 Thirr dikë që e do</li>
+      </ul>
+    </div>
+    <button type="button" class="btn btn-gold" data-breathe-close>Mbyll</button>
+  </div>
+</div>
+
+<%- include('_foot') %>

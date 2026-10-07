@@ -1,0 +1,50 @@
+<%- include('_head') %>
+
+<div class="page-title">
+  <div>
+    <h1>Komentet</h1>
+    <p>Çfarë thonë lexuesit për recetat e tua. Mund t’u përgjigjesh ose t’i fshish.</p>
+  </div>
+</div>
+
+<% if (!comments.length) { %>
+  <div class="empty">
+    <div class="big" aria-hidden="true">💬</div>
+    <h2>Ende asnjë koment</h2>
+    <p>Kur dikush të shkruan diçka poshtë një recete, do ta gjesh këtu. Ndaje lidhjen e blogut me familjen dhe shoqet!</p>
+  </div>
+<% } %>
+
+<% comments.forEach(function (c) { %>
+  <article class="comment-card<%= c.seen ? '' : ' is-new' %>" id="k-<%= c.id %>">
+    <div class="comment-top">
+      <div>
+        <b><%= c.name %></b> <% if (!c.seen) { %><span class="pill pill-draft">I ri</span><% } %>
+        <div class="comment-on">te <% if (c.recipe) { %><a href="/receta/<%= c.recipe.slug %>#k-<%= c.id %>" target="_blank" rel="noopener"><%= c.recipe.title %></a><% } else { %>një recetë e fshirë<% } %></div>
+      </div>
+      <small><%= h.timeAgo(c.createdAt) %></small>
+    </div>
+    <div class="comment-body"><%= c.text %></div>
+
+    <% if (c.reply) { %>
+      <div class="my-reply"><b>Përgjigjja jote:</b><div style="white-space:pre-line"><%= c.reply.text %></div></div>
+    <% } %>
+
+    <div class="comment-actions">
+      <details class="reply-box" style="flex:1">
+        <summary class="btn btn-olive"><%= c.reply ? '✏️ Ndrysho përgjigjen' : '↩️ Përgjigju' %></summary>
+        <form class="reply-form" method="post" action="/paneli/komentet/<%= c.id %>/pergjigju">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <textarea name="reply" aria-label="Përgjigjja jote" placeholder="Faleminderit shumë! …"><%= c.reply ? c.reply.text : '' %></textarea>
+          <button class="btn btn-olive" type="submit">Publiko përgjigjen</button>
+        </form>
+      </details>
+      <form method="post" action="/paneli/komentet/<%= c.id %>/fshi" data-confirm="Ky koment do të fshihet përgjithmonë dhe nuk kthehet mbrapsht.">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn-link" type="submit">🗑 Fshi komentin</button>
+      </form>
+    </div>
+  </article>
+<% }) %>
+
+<%- include('_foot') %>
