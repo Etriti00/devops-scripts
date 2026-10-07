@@ -705,31 +705,6 @@ main {
   margin: 0 auto;
 }
 
-/* ---- Smoke-free badge on home ----------------------------------------- */
-
-.journey-badge {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin: 0 auto 8px;
-  max-width: 720px;
-  padding: 16px 22px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--olive) 12%, var(--card));
-  border: 1px solid color-mix(in srgb, var(--olive) 30%, transparent);
-}
-.journey-badge .num {
-  font: 700 2.2rem/1 var(--display);
-  color: var(--olive);
-}
-.journey-badge p {
-  margin: 0;
-  color: var(--ink-soft);
-}
-.journey-badge b {
-  color: var(--ink);
-}
-
 /* ---- Quote band -------------------------------------------------------- */
 
 .quote-band {

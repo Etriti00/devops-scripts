@@ -11,8 +11,8 @@
   <form method="post" action="/paneli/fillimi">
     <label class="field">
       <span class="label">1. Si të quajnë lexuesit?</span>
-      <span class="help">Ky emër shfaqet poshtë recetave dhe te faqja „Rreth meje”. P.sh. thjesht emri yt, ose „Nëna Lule”.</span>
-      <input type="text" name="authorName" value="<%= values.authorName || '' %>" maxlength="60" required autofocus>
+      <span class="help">Ky emër shfaqet poshtë recetave dhe te faqja „Rreth meje”. P.sh. „Bardha” ose „Nëna Bardha”.</span>
+      <input type="text" name="authorName" value="<%= values.authorName || 'Bardha' %>" maxlength="60" required autofocus>
     </label>
     <label class="field">
       <span class="label">2. Zgjidh një emër përdoruesi</span>

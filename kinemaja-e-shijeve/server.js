@@ -100,13 +100,11 @@ function clampInt(v, max) {
 
 app.get('/', (req, res) => {
   const recipes = published();
-  const smoke = db.get().smoke;
   res.render('public/home', {
     featured: recipes[0] || null,
     recipes: recipes.slice(1),
     allCount: recipes.length,
     commentCount,
-    smokeStats: smoke.showOnBlog ? h.smokeStats(smoke) : null,
     activeCategory: null,
   });
 });
@@ -300,7 +298,6 @@ admin.get('/', (req, res) => {
     publishedCount: recipes.filter((r) => r.status === 'published').length,
     totalViews: recipes.reduce((s, r) => s + (r.views || 0), 0),
     totalApplause: recipes.reduce((s, r) => s + (r.applause || 0), 0),
-    smokeStats: h.smokeStats(state.smoke),
   });
 });
 
@@ -465,49 +462,6 @@ admin.post('/komentet/:id/fshi', auth.checkCsrf, (req, res) => {
   res.redirect('/paneli/komentet');
 });
 
-// ---- Smoke-free journey ----
-
-admin.get('/pa-duhan', (req, res) => {
-  const smoke = db.get().smoke;
-  res.render('admin/smoke', { title: 'Rruga ime pa duhan', smoke, stats: h.smokeStats(smoke) });
-});
-
-admin.post('/pa-duhan', auth.checkCsrf, (req, res) => {
-  const smoke = db.get().smoke;
-  const action = req.body.action;
-  if (action === 'start' || action === 'restart') {
-    if (action === 'restart') smoke.restarts = (smoke.restarts || 0) + 1;
-    // The browser sends the chosen moment as ISO so her time zone is respected.
-    let date = new Date();
-    if (action === 'start' && req.body.quitIso) date = new Date(req.body.quitIso);
-    else if (action === 'start' && req.body.quitDate) date = new Date(`${req.body.quitDate}T${req.body.quitTime || '08:00'}`);
-    if (date > new Date()) date = new Date();
-    smoke.quitDate = (isNaN(date) ? new Date() : date).toISOString();
-    auth.flash(
-      req,
-      action === 'start' ? 'celebrate' : 'info',
-      action === 'start'
-        ? 'Rruga jote pa duhan nisi! Jemi të gjithë me ty.'
-        : 'Asgjë nuk humbet. Çdo fillim i ri është një hap përpara — e kemi rinisur numëruesin bashkë.'
-    );
-  } else if (action === 'settings') {
-    smoke.perDay = clampInt(req.body.perDay, 100) || 20;
-    smoke.packSize = clampInt(req.body.packSize, 50) || 20;
-    smoke.packPrice = Math.max(0, Math.min(100, parseFloat(String(req.body.packPrice).replace(',', '.')) || 0));
-    smoke.showOnBlog = req.body.showOnBlog === '1';
-    auth.flash(req, 'success', 'Të dhënat u ruajtën.');
-  }
-  db.save();
-  res.redirect('/paneli/pa-duhan');
-});
-
-admin.post('/pa-duhan/deshira', auth.checkCsrf, (req, res) => {
-  const smoke = db.get().smoke;
-  smoke.cravingsBeaten = (smoke.cravingsBeaten || 0) + 1;
-  db.save();
-  res.json({ ok: true, count: smoke.cravingsBeaten });
-});
-
 // ---- Settings ----
 
 admin.get('/cilesimet', (req, res) => {
@@ -520,7 +474,6 @@ admin.post('/cilesimet', upload.single('aboutPhoto'), auth.checkCsrf, (req, res)
   s.tagline = String(req.body.tagline || '').trim().slice(0, 140);
   s.authorName = String(req.body.authorName || '').trim().slice(0, 60);
   s.aboutText = String(req.body.aboutText || '').trim().slice(0, 6000);
-  s.currency = ['€', 'den', 'Lekë', 'CHF', '$', '£', 'kr'].includes(req.body.currency) ? req.body.currency : '€';
   if (req.file) {
     removePhoto(s.aboutPhoto);
     s.aboutPhoto = req.file.filename;

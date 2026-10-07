@@ -2,11 +2,9 @@
 
 <section class="hello">
   <div>
-    <h1><%= h.greeting() %>, <%= settings.authorName || 'mikja ime' %>! <span aria-hidden="true">☕</span></h1>
+    <h1><%= h.greeting() %>, <%= settings.authorName || 'Bardha' %>! <span aria-hidden="true">☕</span></h1>
     <% if (welcome) { %>
       <p>Blogu yt është gati. Fillo duke shkruar recetën e parë — është shumë e lehtë, do të të udhëheq hap pas hapi.</p>
-    <% } else if (smokeStats && smokeStats.days >= 1) { %>
-      <p>Sot je <b><%= smokeStats.days %> ditë</b> pa duhan. Çfarë do të gatuajmë sot?</p>
     <% } else { %>
       <p>Çfarë do të gatuajmë sot? Zgjidh më poshtë çfarë dëshiron të bësh.</p>
     <% } %>
@@ -30,11 +28,6 @@
     <b>Komentet</b>
     <span><%= newComments ? `Ke ${newComments} ${newComments === 1 ? 'koment të ri' : 'komente të reja'}!` : 'Lexo çfarë thonë lexuesit dhe u përgjigju.' %></span>
     <% if (newComments) { %><em class="badge"><%= newComments %></em><% } %>
-  </a>
-  <a class="tile" href="/paneli/pa-duhan">
-    <span class="tile-ico" aria-hidden="true">🌿</span>
-    <b>Rruga ime pa duhan</b>
-    <span><%= smokeStats ? `${smokeStats.days} ditë e ${smokeStats.hours} orë — vazhdo kështu!` : 'Një vend vetëm për ty, që të të japë kurajë çdo ditë.' %></span>
   </a>
   <a class="tile" href="/" target="_blank" rel="noopener">
     <span class="tile-ico" aria-hidden="true">👀</span>

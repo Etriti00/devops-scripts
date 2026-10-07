@@ -1,6 +1,6 @@
 # Kinemaja e Shijeve 🎬🍲
 
-*The Cinema of Flavours.* A warm, cinema-themed recipe blog in Albanian, built as a gift. Readers can browse recipes and leave comments. The author uses a large-type dashboard to post recipes herself.
+*The Cinema of Flavours.* A warm, cinema-themed recipe blog in Albanian, built as a gift for Bardha. Readers can browse recipes and leave comments. The author uses a large-type dashboard to post recipes herself.
 
 ## What's inside
 
@@ -20,7 +20,7 @@
 
 **Her dashboard** (`/paneli`)
 - A simple login with username and password, no email. On the first visit, a setup screen creates the account.
-- Large tiles: *Write a new recipe · My recipes · Comments · Smoke-free journey · See the blog · Help*.
+- Large tiles: *Write a new recipe · My recipes · Comments · See the blog · Help*.
 - A **5-step recipe wizard**: name & photo → ingredients → method → memory & film → review & publish.
   - Pressing Enter adds the next ingredient, and pasting a list splits it into rows.
   - Photos are resized in the browser.
@@ -29,13 +29,6 @@
   - Publishing ends with a celebration screen and a "Copy link" button for Viber or WhatsApp.
 - Comments: new ones are highlighted. She can reply or delete, and every delete asks for confirmation in a friendly dialog.
 - **A text-size switch (A A A)** that the dashboard remembers.
-- **"Rruga ime pa duhan"** (my smoke-free journey), a private corner that supports her quitting:
-  - a live counter of days, hours and seconds
-  - cigarettes not smoked and money saved
-  - health milestones
-  - a **"Më erdhi dëshira" button** (I'm having a craving) that starts a 2-minute guided breathing exercise and counts every craving she beats
-  - a no-shame restart if she slips
-  - an optional "X ditë pa duhan" (X days smoke-free) badge on the blog
 - A Help page that answers common questions in plain language.
 
 ## Running it
@@ -47,7 +40,7 @@ npm install
 npm start            # http://localhost:3000
 ```
 
-Open `http://localhost:3000/paneli` and create her account. You can do this together with her the first time.
+Open `http://localhost:3000/paneli` and create Bardha's account (her name is already filled in). You can do this together with her the first time.
 
 All data lives in the `data/` folder: `db.json` holds the content and `uploads/` holds the photos. **Backing up that folder backs up everything.** Set `DATA_DIR` to put the folder somewhere else.
 

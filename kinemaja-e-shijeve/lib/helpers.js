@@ -126,71 +126,6 @@ function greeting() {
   return 'Mirëmbrëma';
 }
 
-// ---- Smoke-free journey -------------------------------------------------
-
-const MILESTONES = [
-  { minutes: 20, label: '20 minuta', text: 'Pulsi dhe tensioni i gjakut fillojnë të kthehen në normalitet.' },
-  { minutes: 12 * 60, label: '12 orë', text: 'Monoksidi i karbonit në gjak bie në nivel normal. Trupi merr më shumë oksigjen.' },
-  { minutes: 24 * 60, label: '1 ditë', text: 'Dita e parë e plotë! Pjesa më e vështirë e udhëtimit ka filluar ta lëshojë vendin.' },
-  { minutes: 2 * 1440, label: '2 ditë', text: 'Shija dhe nuhatja fillojnë të përmirësohen — gatimet do të të duken edhe më të shijshme!' },
-  { minutes: 3 * 1440, label: '3 ditë', text: 'Nikotina është larguar nga trupi. Frymëmarrja bëhet më e lehtë.' },
-  { minutes: 7 * 1440, label: '1 javë', text: 'Një javë e tërë! Kjo meriton një ëmbëlsirë të veçantë.' },
-  { minutes: 14 * 1440, label: '2 javë', text: 'Qarkullimi i gjakut përmirësohet. Ecja dhe shkallët bëhen më të lehta.' },
-  { minutes: 30 * 1440, label: '1 muaj', text: 'Kolla dhe lodhja pakësohen dalëngadalë. Mushkëritë po pastrohen.' },
-  { minutes: 100 * 1440, label: '100 ditë', text: '100 ditë pa duhan — si një film i gjatë me fund të lumtur!' },
-  { minutes: 365 * 1440, label: '1 vit', text: 'Rreziku për sëmundje të zemrës bie përgjysmë krahasuar me një duhanpirës.' },
-  { minutes: 5 * 365 * 1440, label: '5 vjet', text: 'Rreziku për goditje në tru zbret pothuajse sa te dikush që s’ka pirë kurrë duhan.' },
-  { minutes: 10 * 365 * 1440, label: '10 vjet', text: 'Rreziku për kancer të mushkërive bie përgjysmë.' },
-];
-
-const ENCOURAGEMENTS = [
-  'Çdo ditë pa duhan është një skenë e re në filmin e jetës sate.',
-  'Dëshira zgjat vetëm pak minuta. Ti je më e fortë se ajo.',
-  'Mos e numëro sa ke mbetur — shiko sa larg ke ardhur.',
-  'Shija e kafesë, aroma e bukës së ngrohtë… tani i ndien më mirë se kurrë.',
-  'Familja jote krenohet me ty. Çdo ditë.',
-  'Edhe filmat më të bukur kanë momente të vështira. Rëndësi ka fundi.',
-  'Frymëmarrja jote po bëhet më e lirë, dita-ditës.',
-  'Kur të vjen dëshira, gatuaj diçka. Duart e zëna e harrojnë cigaren.',
-];
-
-function smokeStats(smoke) {
-  if (!smoke.quitDate) return null;
-  const start = new Date(smoke.quitDate).getTime();
-  const minutes = Math.max(0, (Date.now() - start) / 60000);
-  const days = Math.floor(minutes / 1440);
-  const hours = Math.floor((minutes % 1440) / 60);
-  const perDay = Number(smoke.perDay) || 0;
-  const avoided = Math.floor((minutes / 1440) * perDay);
-  const packSize = Number(smoke.packSize) || 20;
-  const saved = (avoided / packSize) * (Number(smoke.packPrice) || 0);
-  const milestones = MILESTONES.map((m) => ({ ...m, done: minutes >= m.minutes }));
-  const next = milestones.find((m) => !m.done) || null;
-  const prev = [...milestones].reverse().find((m) => m.done);
-  let progress = 100;
-  if (next) {
-    const from = prev ? prev.minutes : 0;
-    progress = Math.min(100, Math.max(0, ((minutes - from) / (next.minutes - from)) * 100));
-  }
-  const timeToNext = next ? next.minutes - minutes : 0;
-  return { minutes, days, hours, avoided, saved, milestones, next, progress, timeToNext };
-}
-
-function friendlyRemaining(minutes) {
-  const m = Math.ceil(minutes);
-  if (m < 60) return m === 1 ? '1 minutë' : `${m} minuta`;
-  const h = Math.ceil(m / 60);
-  if (h < 48) return h === 1 ? '1 orë' : `${h} orë`;
-  const d = Math.ceil(m / 1440);
-  return `${d} ditë`;
-}
-
-function encouragement() {
-  // Same message all day, a new one each day.
-  const day = Math.floor(Date.now() / 864e5);
-  return ENCOURAGEMENTS[day % ENCOURAGEMENTS.length];
-}
-
 module.exports = {
   CATEGORIES,
   DIFFICULTIES,
@@ -207,8 +142,4 @@ module.exports = {
   isIngredientHeading,
   excerpt,
   greeting,
-  smokeStats,
-  friendlyRemaining,
-  encouragement,
-  ENCOURAGEMENTS,
 };

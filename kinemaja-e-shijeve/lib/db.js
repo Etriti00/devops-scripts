@@ -25,26 +25,16 @@ function defaults() {
     settings: {
       blogName: 'Kinemaja e Shijeve',
       tagline: 'Receta me shije, kujtime me dritë kinemaje',
-      authorName: '',
+      authorName: 'Bardha',
       aboutText: DEFAULT_ABOUT,
       aboutPhoto: '',
       textSize: 'normal',
-      currency: '€',
       secret: crypto.randomBytes(32).toString('hex'),
     },
     user: null,
     sessions: {},
     recipes: [],
     comments: [],
-    smoke: {
-      quitDate: null,
-      perDay: 20,
-      packSize: 20,
-      packPrice: 3,
-      showOnBlog: false,
-      cravingsBeaten: 0,
-      restarts: 0,
-    },
   };
 }
 
@@ -58,7 +48,6 @@ function load() {
       ...base,
       ...raw,
       settings: { ...base.settings, ...raw.settings },
-      smoke: { ...base.smoke, ...raw.smoke },
     };
   } else {
     state = defaults();
