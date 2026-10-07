@@ -1,0 +1,44 @@
+<%- include('_head') %>
+
+<div class="page-title">
+  <div>
+    <h1>Recetat e mia</h1>
+    <p><%= recipes.length ? `Gjithsej ${recipes.length} ${recipes.length === 1 ? 'recetë' : 'receta'}.` : 'Këtu do të shfaqen recetat që shkruan.' %></p>
+  </div>
+  <a class="btn btn-big" href="/paneli/receta/e-re">✍️ Recetë e re</a>
+</div>
+
+<% if (!recipes.length) { %>
+  <div class="empty">
+    <div class="big" aria-hidden="true">📖</div>
+    <h2>Ende asnjë recetë</h2>
+    <p>Fillo me recetën që të kërkojnë më shpesh në familje. Do të të udhëheq hap pas hapi.</p>
+    <a class="btn btn-big" href="/paneli/receta/e-re">Shkruaj recetën e parë</a>
+  </div>
+<% } else { %>
+  <div class="rows">
+    <% recipes.forEach(function (r) { var live = r.status === 'published'; %>
+      <div class="row">
+        <div class="row-thumb"><% if (r.photo) { %><img src="/foto/<%= r.photo %>" alt=""><% } else { %><span aria-hidden="true"><%= h.category(r.category).icon %></span><% } %></div>
+        <div>
+          <h3><%= r.title %></h3>
+          <div class="row-meta">
+            <% if (live) { %><span class="pill pill-live">● Në blog</span><% } else { %><span class="pill pill-draft">✏️ Skicë — s’e sheh askush</span><% } %>
+            <% if (live) { %><span>👀 <%= h.number(r.views || 0) %> lexime</span><span>💬 <%= commentCount(r.id) %></span><span>👏 <%= r.applause || 0 %></span><% } %>
+            <span>Ndryshuar <%= h.timeAgo(r.updatedAt) %></span>
+          </div>
+        </div>
+        <div class="row-actions">
+          <a class="btn" href="/paneli/receta/<%= r.id %>/ndrysho">✏️ Ndrysho</a>
+          <a class="btn btn-ghost" href="/receta/<%= r.slug %>" target="_blank" rel="noopener">👀 Shiko</a>
+          <form method="post" action="/paneli/receta/<%= r.id %>/fshi" data-confirm="Receta „<%= r.title %>” do të fshihet përgjithmonë, bashkë me komentet e saj. Kjo nuk kthehet mbrapsht.">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn-ghost" type="submit" style="color:var(--danger)">🗑 Fshi</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('_foot') %>

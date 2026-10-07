@@ -1,0 +1,27 @@
+<%- include('_head') %>
+
+<div class="celebrate" data-confetti>
+  <div class="ticket-big">
+    <small>PREMIERË</small>
+    <h2><%= recipe.title %></h2>
+  </div>
+  <h1>Bravo! Receta është në blog 🎉</h1>
+  <p class="lead">Tani mund ta lexojë kushdo. Dërgoja lidhjen familjes dhe shoqeve — do të gëzohen!</p>
+
+  <div class="card" style="text-align:left;margin-top:24px">
+    <span class="label">Lidhja e recetës</span>
+    <span class="help">Kliko „Kopjo” dhe pastaj ngjite në Viber, WhatsApp ose Facebook.</span>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <input class="input" style="flex:1;min-width:220px" readonly value="" data-share-url="/receta/<%= recipe.slug %>">
+      <button type="button" class="btn" data-copy>📋 Kopjo</button>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-gold btn-big" href="/receta/<%= recipe.slug %>" target="_blank" rel="noopener">👀 Shiko recetën</a>
+    <a class="btn btn-ghost btn-big" href="/paneli/receta/e-re">✍️ Shkruaj një tjetër</a>
+    <a class="btn btn-ghost btn-big" href="/paneli">🏠 Kthehu në ballinë</a>
+  </div>
+</div>
+
+<%- include('_foot') %>

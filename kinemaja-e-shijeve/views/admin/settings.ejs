@@ -1,0 +1,81 @@
+<%- include('_head') %>
+
+<div class="page-title">
+  <div>
+    <h1>Cilësimet</h1>
+    <p>Emri i blogut, faqja „Rreth meje” dhe fjalëkalimi.</p>
+  </div>
+</div>
+
+<form class="card" method="post" action="/paneli/cilesimet" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <input type="hidden" name="removePhoto" value="" data-remove-photo>
+  <h2>📰 Blogu im</h2>
+  <div class="grid-2">
+    <label class="field">
+      <span class="label">Emri i blogut</span>
+      <input type="text" name="blogName" value="<%= settings.blogName %>" maxlength="60">
+    </label>
+    <label class="field">
+      <span class="label">Emri yt (si e shohin lexuesit)</span>
+      <input type="text" name="authorName" value="<%= settings.authorName %>" maxlength="60">
+    </label>
+  </div>
+  <label class="field">
+    <span class="label">Moto e blogut</span>
+    <span class="help">Një fjali e shkurtër që shfaqet në kërkimet në internet dhe kur dikush e ndan blogun.</span>
+    <input type="text" name="tagline" value="<%= settings.tagline %>" maxlength="140">
+  </label>
+
+  <h2 style="margin-top:30px">👩‍🍳 Faqja „Rreth meje”</h2>
+  <label class="field">
+    <span class="label">Teksti</span>
+    <span class="help">Trego diçka për veten: Shkupin, kuzhinën, kinematë… Lëre një rresht bosh për të nisur paragraf të ri.</span>
+    <textarea name="aboutText" class="story" maxlength="6000"><%= settings.aboutText %></textarea>
+  </label>
+
+  <div class="field">
+    <span class="label">Fotoja jote <span class="opt">(sipas dëshirës)</span></span>
+    <div class="photo-preview" data-photo-preview style="max-width:280px" <%= settings.aboutPhoto ? '' : 'hidden' %>>
+      <img src="<%= settings.aboutPhoto ? `/foto/${settings.aboutPhoto}` : '' %>" alt="Fotoja jote" data-photo-img style="aspect-ratio:1">
+    </div>
+    <div class="photo-actions" data-photo-actions <%= settings.aboutPhoto ? '' : 'hidden' %>>
+      <button type="button" class="btn btn-ghost" data-photo-change>🔄 Ndrysho foton</button>
+      <button type="button" class="btn btn-ghost" data-photo-remove style="color:var(--danger)">🗑 Hiqe foton</button>
+    </div>
+    <label class="photo-zone" data-photo-zone style="min-height:180px" <%= settings.aboutPhoto ? 'hidden' : '' %>>
+      <input type="file" name="aboutPhoto" accept="image/*" data-photo-input>
+      <span><span class="pz-ico" aria-hidden="true">🖼️</span><b>Kliko për të zgjedhur një foto</b></span>
+    </label>
+  </div>
+
+  <button class="btn btn-big" type="submit">💾 Ruaj cilësimet</button>
+</form>
+
+<form class="card" method="post" action="/paneli/cilesimet/fjalekalimi" id="fjalekalimi">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2>🔑 Hyrja në panel</h2>
+  <% if (error) { %><div class="error" role="alert"><%= error %></div><% } %>
+  <label class="field">
+    <span class="label">Emri i përdoruesit</span>
+    <span class="help">Tani është: <b><%= user.username %></b>. Lëre siç është nëse s’do ta ndryshosh.</span>
+    <input type="text" name="username" value="<%= user.username %>" maxlength="40" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username">
+  </label>
+  <label class="field">
+    <span class="label">Fjalëkalimi i tanishëm</span>
+    <span class="pw-wrap"><input type="password" name="current" autocomplete="current-password" required><button type="button" class="pw-toggle" data-pw-toggle>👁 Shfaqe</button></span>
+  </label>
+  <div class="grid-2">
+    <label class="field">
+      <span class="label">Fjalëkalimi i ri</span>
+      <input type="password" name="password" autocomplete="new-password" minlength="6" required>
+    </label>
+    <label class="field">
+      <span class="label">Fjalëkalimi i ri, edhe një herë</span>
+      <input type="password" name="password2" autocomplete="new-password" minlength="6" required>
+    </label>
+  </div>
+  <button class="btn" type="submit">Ndrysho fjalëkalimin</button>
+</form>
+
+<%- include('_foot') %>

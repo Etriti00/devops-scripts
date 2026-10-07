@@ -1,0 +1,67 @@
+<%- include('_head') %>
+
+<section class="hello">
+  <div>
+    <h1><%= h.greeting() %>, <%= settings.authorName || 'Bardha' %>! <span aria-hidden="true">☕</span></h1>
+    <% if (welcome) { %>
+      <p>Blogu yt është gati. Fillo duke shkruar recetën e parë — është shumë e lehtë, do të të udhëheq hap pas hapi.</p>
+    <% } else { %>
+      <p>Çfarë do të gatuajmë sot? Zgjidh më poshtë çfarë dëshiron të bësh.</p>
+    <% } %>
+  </div>
+  <div class="reel" aria-hidden="true">🎞️</div>
+</section>
+
+<div class="tiles">
+  <a class="tile tile-primary" href="/paneli/receta/e-re">
+    <span class="tile-ico" aria-hidden="true">✍️</span>
+    <b>Shkruaj një recetë të re</b>
+    <span>Të udhëheq hap pas hapi: emri, fotoja, përbërësit, përgatitja.</span>
+  </a>
+  <a class="tile" href="/paneli/receta">
+    <span class="tile-ico" aria-hidden="true">📖</span>
+    <b>Recetat e mia</b>
+    <span>Shiko, ndrysho ose fshi recetat që ke shkruar.</span>
+  </a>
+  <a class="tile" href="/paneli/komentet">
+    <span class="tile-ico" aria-hidden="true">💬</span>
+    <b>Komentet</b>
+    <span><%= newComments ? `Ke ${newComments} ${newComments === 1 ? 'koment të ri' : 'komente të reja'}!` : 'Lexo çfarë thonë lexuesit dhe u përgjigju.' %></span>
+    <% if (newComments) { %><em class="badge"><%= newComments %></em><% } %>
+  </a>
+  <a class="tile" href="/" target="_blank" rel="noopener">
+    <span class="tile-ico" aria-hidden="true">👀</span>
+    <b>Shiko blogun</b>
+    <span>Shiko si e shohin lexuesit. Hapet në një dritare të re.</span>
+  </a>
+  <a class="tile" href="/paneli/ndihme">
+    <span class="tile-ico" aria-hidden="true">❓</span>
+    <b>Si funksionon?</b>
+    <span>Përgjigje të shkurtra për pyetjet më të shpeshta.</span>
+  </a>
+</div>
+
+<div class="stats">
+  <div class="stat"><strong><%= publishedCount %></strong><span>receta të publikuara</span></div>
+  <div class="stat"><strong><%= drafts.length %></strong><span>skica në pritje</span></div>
+  <div class="stat"><strong><%= h.number(totalViews) %></strong><span>herë janë lexuar recetat</span></div>
+  <div class="stat"><strong><%= h.number(totalApplause) %></strong><span>duartrokitje 👏</span></div>
+</div>
+
+<% if (drafts.length) { %>
+  <h2 class="section-title">Vazhdo aty ku e le</h2>
+  <div class="rows">
+    <% drafts.slice(0, 3).forEach(function (r) { %>
+      <div class="row">
+        <div class="row-thumb"><% if (r.photo) { %><img src="/foto/<%= r.photo %>" alt=""><% } else { %><span aria-hidden="true"><%= h.category(r.category).icon %></span><% } %></div>
+        <div>
+          <h3><%= r.title %></h3>
+          <div class="row-meta"><span class="pill pill-draft">✏️ Skicë</span><span>Ndryshuar <%= h.timeAgo(r.updatedAt) %></span></div>
+        </div>
+        <div class="row-actions"><a class="btn" href="/paneli/receta/<%= r.id %>/ndrysho">Vazhdo shkrimin</a></div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('_foot') %>

@@ -1,0 +1,29 @@
+<%- include('_head', { bodyClass: 'auth' }) %>
+
+<div class="auth-card">
+  <div class="auth-head">
+    <div class="sign"><%= settings.blogName %></div>
+    <p>Mirë se u ktheve! Hyr në kuzhinën tënde.</p>
+  </div>
+
+  <% if (error) { %><div class="error" role="alert"><%= error %></div><% } %>
+
+  <form method="post" action="/paneli/hyr">
+    <label class="field">
+      <span class="label">Emri i përdoruesit</span>
+      <input type="text" name="username" value="<%= username %>" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required autofocus>
+    </label>
+    <label class="field">
+      <span class="label">Fjalëkalimi</span>
+      <span class="pw-wrap">
+        <input type="password" name="password" autocomplete="current-password" required>
+        <button type="button" class="pw-toggle" data-pw-toggle>👁 Shfaqe</button>
+      </span>
+    </label>
+    <button class="btn btn-big" type="submit">Hyr</button>
+  </form>
+  <p class="auth-foot">E harrove fjalëkalimin? Mos u shqetëso — të ndihmon familja ta rregullosh.</p>
+</div>
+<p class="auth-foot" style="color:#f1d7b8"><a href="/" style="color:#f6e3b0">← Kthehu te blogu</a></p>
+
+<%- include('_foot') %>

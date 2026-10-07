@@ -1,0 +1,22 @@
+<% var cat = h.category(r.category); var total = h.totalTime(r); var n = commentCount(r.id); %>
+<a class="ticket reveal" href="/receta/<%= r.slug %>">
+  <div class="ticket-media">
+    <% if (r.photo) { %>
+      <img src="/foto/<%= r.photo %>" alt="<%= r.title %>" loading="lazy">
+    <% } else { %>
+      <div class="poster-fallback" data-cat="<%= r.category %>">
+        <div><div class="poster-icon" aria-hidden="true"><%= cat.icon %></div><div class="poster-title"><%= r.title %></div></div>
+      </div>
+    <% } %>
+    <span class="ticket-genre"><%= cat.name %></span>
+  </div>
+  <div class="ticket-body">
+    <h3><%= r.title %></h3>
+    <p><%= h.excerpt(r.summary || r.story, 110) %></p>
+  </div>
+  <div class="ticket-stub">
+    <% if (total) { %><span title="Koha gjithsej">⏱ <%= h.shortDuration(total) %></span><% } %>
+    <% if (r.servings) { %><span title="Porcione">🍽 <%= r.servings %> <%= r.servings == 1 ? 'porcion' : 'porcione' %></span><% } %>
+    <span title="Komente">💬 <%= n %></span>
+  </div>
+</a>

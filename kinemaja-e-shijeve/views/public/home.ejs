@@ -1,0 +1,64 @@
+<%- include('../partials/head') %>
+
+<section class="now-showing">
+  <div class="wrap">
+    <% if (featured) { var fc = h.category(featured.category); %>
+      <div class="now-label">Tani në ekran</div>
+      <a class="feature" href="/receta/<%= featured.slug %>">
+        <div class="feature-media">
+          <% if (featured.photo) { %>
+            <img src="/foto/<%= featured.photo %>" alt="<%= featured.title %>">
+          <% } else { %>
+            <div class="poster-fallback" data-cat="<%= featured.category %>">
+              <div><div class="poster-icon" aria-hidden="true"><%= fc.icon %></div><div class="poster-title"><%= featured.title %></div></div>
+            </div>
+          <% } %>
+        </div>
+        <div class="feature-body">
+          <span class="kicker"><%= fc.name %> · <%= h.formatDate(featured.publishedAt) %></span>
+          <h2><%= featured.title %></h2>
+          <p><%= h.excerpt(featured.summary || featured.story, 220) %></p>
+          <div class="feature-meta">
+            <% if (h.totalTime(featured)) { %><span>⏱ <b><%= h.duration(h.totalTime(featured)) %></b></span><% } %>
+            <% if (featured.servings) { %><span>🍽 <b><%= featured.servings %> porcione</b></span><% } %>
+            <% if (featured.film && featured.film.title) { %><span>🎬 <b><%= featured.film.title %></b></span><% } %>
+          </div>
+          <span><span class="btn">Shiko recetën <span aria-hidden="true">→</span></span></span>
+        </div>
+      </a>
+    <% } else { %>
+      <div class="now-label">Së shpejti</div>
+      <div class="empty">
+        <div class="empty-icon" aria-hidden="true">🎞️</div>
+        <h2>Shfaqja fillon së shpejti</h2>
+        <p>Perdet po hapen dhe kuzhina po ngrohet. Recetat e para do të shfaqen këtu shumë shpejt — kaloni sërish!</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (recipes.length) { %>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Repertori</span>
+          <h2>Të gjitha shfaqjet</h2>
+        </div>
+        <p><%= allCount %> receta, secila me historinë e vet</p>
+      </div>
+      <div class="tickets">
+        <% recipes.forEach(function (r) { %><%- include('../partials/ticket', { r: r }) %><% }) %>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<section class="quote-band">
+  <div class="wrap">
+    <blockquote class="reveal">Çdo recetë është si një film i vjetër: e sheh për të njëqindtën herë dhe prapë të prek zemrën.</blockquote>
+    <cite><%= settings.authorName || settings.blogName %></cite>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

@@ -1,0 +1,216 @@
+<%- include('_head') %>
+<% var live = recipe.status === 'published'; %>
+
+<div class="page-title">
+  <div>
+    <h1><%= isNew ? 'Recetë e re' : recipe.title %></h1>
+    <p><%= isNew ? 'Plotëso hapat një nga një. Asgjë nuk publikohet pa e vendosur ti.' : (live ? 'Kjo recetë është në blog. Ndryshimet duken sapo t’i ruash.' : 'Kjo është skicë — nuk e sheh askush tjetër.') %></p>
+  </div>
+  <% if (!isNew) { %><a class="btn btn-ghost" href="/receta/<%= recipe.slug %>" target="_blank" rel="noopener">👀 Shiko si duket</a><% } %>
+</div>
+
+<div class="tip" data-restore hidden>
+  <span aria-hidden="true">💾</span>
+  <span>Gjeta një recetë që kishe nisur ta shkruaje dhe s’e kishe ruajtur. Ta rikthej?
+    <button type="button" class="btn btn-gold" data-restore-yes style="min-height:2.4rem;padding:.4em 1em;margin:6px 6px 0 0">Po, riktheje</button>
+    <button type="button" class="btn btn-ghost" data-restore-no style="min-height:2.4rem;padding:.4em 1em;margin-top:6px">Jo, fillo nga e para</button>
+  </span>
+</div>
+
+<ol class="wizard-progress" data-progress hidden>
+  <li><button type="button" data-goto="0">Emri dhe fotoja</button></li>
+  <li><button type="button" data-goto="1">Përbërësit</button></li>
+  <li><button type="button" data-goto="2">Përgatitja</button></li>
+  <li><button type="button" data-goto="3">Kujtimi dhe filmi</button></li>
+  <li><button type="button" data-goto="4">Publikimi</button></li>
+</ol>
+
+<form method="post" enctype="multipart/form-data" action="<%= isNew ? '/paneli/receta' : `/paneli/receta/${recipe.id}` %>" data-editor data-key="ks-draft-<%= recipe.id || 'new' %>" data-new="<%= isNew ? '1' : '' %>">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <input type="hidden" name="removePhoto" value="" data-remove-photo>
+
+  <!-- 1. Title & photo -->
+  <section class="step-panel card" data-step>
+    <h2>Si quhet gjella?</h2>
+    <p class="lead">Fillojmë me emrin dhe një foto të bukur.</p>
+
+    <label class="field">
+      <span class="label">Emri i recetës</span>
+      <input type="text" name="title" class="big-input" value="<%= recipe.title %>" maxlength="120" placeholder="P.sh. Pite me spinaq si në Shkup" data-required>
+    </label>
+
+    <label class="field">
+      <span class="label">Një fjali që e përshkruan <span class="opt">(nuk është e detyrueshme)</span></span>
+      <span class="help">Shfaqet nën emër, si një ftesë: „Brumë i hollë, mbushje e butë dhe aroma e së dielës.”</span>
+      <input type="text" name="summary" value="<%= recipe.summary %>" maxlength="300">
+    </label>
+
+    <div class="field">
+      <span class="label">Fotoja <span class="opt">(nuk është e detyrueshme, por e bën recetën më tërheqëse)</span></span>
+      <div class="photo-preview" data-photo-preview <%= recipe.photo ? '' : 'hidden' %>>
+        <img src="<%= recipe.photo ? `/foto/${recipe.photo}` : '' %>" alt="Fotoja e recetës" data-photo-img>
+      </div>
+      <div class="photo-actions" data-photo-actions <%= recipe.photo ? '' : 'hidden' %>>
+        <button type="button" class="btn btn-ghost" data-photo-change>🔄 Ndrysho foton</button>
+        <button type="button" class="btn btn-ghost" data-photo-remove style="color:var(--danger)">🗑 Hiqe foton</button>
+      </div>
+      <label class="photo-zone" data-photo-zone <%= recipe.photo ? 'hidden' : '' %>>
+        <input type="file" name="photo" accept="image/*" data-photo-input>
+        <span>
+          <span class="pz-ico" aria-hidden="true">📷</span>
+          <b>Kliko këtu për të zgjedhur një foto</b>
+          <small>ose tërhiqe foton dhe lëshoje këtu</small>
+        </span>
+      </label>
+    </div>
+
+    <div class="field">
+      <span class="label">Në cilin „zhanër” bën pjesë?</span>
+      <span class="help">Lexuesit i gjejnë recetat sipas këtyre grupeve.</span>
+      <div class="choices">
+        <% h.CATEGORIES.forEach(function (c) { %>
+          <label class="choice">
+            <input type="radio" name="category" value="<%= c.slug %>" <%= recipe.category === c.slug ? 'checked' : '' %>>
+            <span><i aria-hidden="true"><%= c.icon %></i><%= c.name %></span>
+          </label>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Ingredients -->
+  <section class="step-panel card" data-step>
+    <h2>Çfarë duhet?</h2>
+    <p class="lead">Shkruaj një përbërës në çdo rresht. Shtyp <b>Enter</b> dhe hapet rreshti tjetër.</p>
+    <div class="tip"><b>💡 Këshillë:</b> <span>Nëse receta ka pjesë, shkruaj një titull që mbaron me dy pika, p.sh. <i>„Për brumin:”</i> — do të shfaqet si nëntitull.</span></div>
+
+    <div class="list-editor" data-list="ingredients">
+      <% var ings = recipe.ingredients.length ? recipe.ingredients : ['', '', '']; %>
+      <% ings.forEach(function (line, i) { %>
+        <div class="list-item<%= h.isIngredientHeading(line) ? ' is-heading' : '' %>">
+          <span class="num"><%= i + 1 %></span>
+          <input type="text" name="ingredients" value="<%= line %>" placeholder="P.sh. 500 g miell" aria-label="Përbërësi">
+          <button type="button" class="remove" data-remove aria-label="Hiqe këtë rresht" title="Hiqe">✕</button>
+        </div>
+      <% }) %>
+    </div>
+    <button type="button" class="add-row" data-add="ingredients">＋ Shto një përbërës</button>
+
+    <div class="grid-2" style="margin-top:28px">
+      <label class="field">
+        <span class="label">Për sa veta është?</span>
+        <span class="input-with-suffix"><input type="number" name="servings" min="1" max="100" inputmode="numeric" value="<%= recipe.servings %>"><span>veta</span></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- 3. Steps -->
+  <section class="step-panel card" data-step>
+    <h2>Si përgatitet?</h2>
+    <p class="lead">Shpjegoje hap pas hapi, sikur t’ia tregoje dikujt që gatuan pranë teje.</p>
+
+    <div class="list-editor" data-list="steps">
+      <% var steps = recipe.steps.length ? recipe.steps : ['', '']; %>
+      <% steps.forEach(function (s, i) { %>
+        <div class="list-item">
+          <span class="num"><%= i + 1 %></span>
+          <textarea name="steps" placeholder="P.sh. Përziej miellin me ujë të vakët dhe pak kripë…" aria-label="Hapi <%= i + 1 %>"><%= s %></textarea>
+          <button type="button" class="remove" data-remove aria-label="Hiqe këtë hap" title="Hiqe">✕</button>
+        </div>
+      <% }) %>
+    </div>
+    <button type="button" class="add-row" data-add="steps">＋ Shto një hap</button>
+
+    <div class="grid-3" style="margin-top:28px">
+      <label class="field">
+        <span class="label">Koha e përgatitjes</span>
+        <span class="input-with-suffix"><input type="number" name="prepMinutes" min="0" max="2880" inputmode="numeric" value="<%= recipe.prepMinutes %>"><span>minuta</span></span>
+      </label>
+      <label class="field">
+        <span class="label">Koha e gatimit</span>
+        <span class="input-with-suffix"><input type="number" name="cookMinutes" min="0" max="2880" inputmode="numeric" value="<%= recipe.cookMinutes %>"><span>minuta</span></span>
+      </label>
+      <label class="field">
+        <span class="label">Sa e vështirë është?</span>
+        <select name="difficulty">
+          <option value="">— Zgjidh —</option>
+          <% Object.keys(h.DIFFICULTIES).forEach(function (k) { %>
+            <option value="<%= k %>" <%= recipe.difficulty === k ? 'selected' : '' %>><%= h.DIFFICULTIES[k] %></option>
+          <% }) %>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <!-- 4. Story & film -->
+  <section class="step-panel card" data-step>
+    <h2>Historia pas recetës</h2>
+    <p class="lead">Kjo e bën blogun tënd të veçantë. Të dyja janë <b>sipas dëshirës</b> — mund t’i kalosh.</p>
+
+    <label class="field">
+      <span class="label">Kujtimi</span>
+      <span class="help">Kush ta mësoi? Kur e gatuaje? Ndonjë e diel në Shkup, ndonjë festë, ndonjë mbrëmje pas kinemasë…</span>
+      <textarea name="story" class="story" maxlength="8000" placeholder="Kjo pite më kujton…"><%= recipe.story %></textarea>
+    </label>
+
+    <h3 style="margin-top:30px">🎬 Filmi që i shkon kësaj gjelle</h3>
+    <p class="help">Cilin film do të shihje duke e shijuar këtë gjellë?</p>
+    <div class="grid-2">
+      <label class="field">
+        <span class="label">Emri i filmit</span>
+        <input type="text" name="filmTitle" value="<%= recipe.film && recipe.film.title %>" maxlength="120" placeholder="P.sh. Pushime romake">
+      </label>
+      <label class="field">
+        <span class="label">Viti <span class="opt">(nëse e mban mend)</span></span>
+        <input type="number" name="filmYear" min="1890" max="2100" inputmode="numeric" value="<%= recipe.film && recipe.film.year %>" placeholder="1953">
+      </label>
+    </div>
+    <label class="field">
+      <span class="label">Pse ky film? <span class="opt">(sipas dëshirës)</span></span>
+      <input type="text" name="filmNote" value="<%= recipe.film && recipe.film.note %>" maxlength="500" placeholder="P.sh. E pashë në kinema me shoqet, dhe pas filmit hëngrëm pikërisht këtë.">
+    </label>
+  </section>
+
+  <!-- 5. Review & publish -->
+  <section class="step-panel card" data-step>
+    <h2><%= live ? 'Ruaj ndryshimet' : 'Gati për shfaqje?' %></h2>
+    <p class="lead">Ja një përmbledhje. Mund të kthehesh te çdo hap për ta plotësuar.</p>
+    <div class="review" data-review></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
+      <% if (live) { %>
+        <button class="btn btn-big btn-gold" type="submit" name="action" value="publish">💾 Ruaj ndryshimet</button>
+        <button class="btn btn-ghost" type="submit" name="action" value="unpublish">Hiqe nga blogu (ktheje në skicë)</button>
+      <% } else { %>
+        <button class="btn btn-big btn-gold" type="submit" name="action" value="publish">🎬 Publiko recetën</button>
+        <button class="btn btn-big btn-ghost" type="submit" name="action" value="draft">Ruaje si skicë</button>
+      <% } %>
+    </div>
+  </section>
+
+  <div class="wizard-nav">
+    <button type="button" class="btn btn-ghost" data-prev>← Mbrapa</button>
+    <span class="autosave" data-autosave></span>
+    <div class="right">
+      <% if (!live) { %><button class="btn btn-ghost" type="submit" name="action" value="draft">💾 Ruaje si skicë</button><% } %>
+      <button type="button" class="btn" data-next>Vazhdo →</button>
+      <button class="btn btn-gold no-js-only" type="submit" name="action" value="publish"><%= live ? 'Ruaj ndryshimet' : 'Publiko' %></button>
+    </div>
+  </div>
+</form>
+
+<template data-template="ingredients">
+  <div class="list-item">
+    <span class="num"></span>
+    <input type="text" name="ingredients" placeholder="P.sh. 2 lugë vaj ulliri" aria-label="Përbërësi">
+    <button type="button" class="remove" data-remove aria-label="Hiqe këtë rresht" title="Hiqe">✕</button>
+  </div>
+</template>
+<template data-template="steps">
+  <div class="list-item">
+    <span class="num"></span>
+    <textarea name="steps" placeholder="Shkruaj hapin tjetër…" aria-label="Hapi"></textarea>
+    <button type="button" class="remove" data-remove aria-label="Hiqe këtë hap" title="Hiqe">✕</button>
+  </div>
+</template>
+
+<%- include('_foot') %>

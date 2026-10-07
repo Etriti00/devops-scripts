@@ -1,0 +1,150 @@
+<%- include('../partials/head') %>
+<% var cat = h.category(recipe.category); var author = settings.authorName || 'Autorja'; %>
+
+<% if (isPreview) { %>
+  <div class="preview-bar">👀 Kjo është një skicë — vetëm ti e sheh. <a href="/paneli/receta/<%= recipe.id %>/ndrysho">Kthehu te shkrimi</a></div>
+<% } %>
+
+<article class="recipe" data-slug="<%= recipe.slug %>">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Ku ndodheni">
+      <a href="/">Ballina</a> ›
+      <% if (recipe.category) { %><a href="/zhanri/<%= cat.slug %>"><%= cat.name %></a> ›<% } %>
+      <span><%= recipe.title %></span>
+    </nav>
+
+    <header class="recipe-hero">
+      <div class="film-frame">
+        <div class="frame-inner">
+          <% if (recipe.photo) { %>
+            <img src="/foto/<%= recipe.photo %>" alt="<%= recipe.title %>">
+          <% } else { %>
+            <div class="poster-fallback" data-cat="<%= recipe.category %>">
+              <div><div class="poster-icon" aria-hidden="true"><%= cat.icon %></div><div class="poster-title"><%= recipe.title %></div></div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <div>
+        <span class="kicker"><%= cat.name %><% if (recipe.publishedAt) { %> · <%= h.formatDate(recipe.publishedAt) %><% } %></span>
+        <h1 class="recipe-title"><%= recipe.title %></h1>
+        <% if (recipe.summary) { %><p class="recipe-summary"><%= recipe.summary %></p><% } %>
+
+        <div class="meta-ticket">
+          <% if (recipe.prepMinutes) { %><div><small>Përgatitja</small><strong><%= h.duration(recipe.prepMinutes) %></strong></div><% } %>
+          <% if (recipe.cookMinutes) { %><div><small>Gatimi</small><strong><%= h.duration(recipe.cookMinutes) %></strong></div><% } %>
+          <% if (recipe.servings) { %><div><small>Porcione</small><strong><%= recipe.servings %></strong></div><% } %>
+          <% if (recipe.difficulty) { %><div><small>Vështirësia</small><strong><%= h.DIFFICULTIES[recipe.difficulty] %></strong></div><% } %>
+        </div>
+
+        <div class="recipe-actions">
+          <a class="btn" href="#gatimi">Le të gatuajmë <span aria-hidden="true">↓</span></a>
+          <% if (!isPreview) { %>
+            <button type="button" class="btn btn-ghost applause" data-applause data-slug="<%= recipe.slug %>">
+              <span class="clap-icon" aria-hidden="true">👏</span> Duartrokit <span class="count" data-count><%= recipe.applause || 0 %></span>
+            </button>
+          <% } %>
+          <button type="button" class="btn btn-ghost" data-print>🖨️ Printo</button>
+        </div>
+      </div>
+    </header>
+
+    <% if (recipe.story) { %>
+      <section class="story reveal" aria-labelledby="kujtimi">
+        <h2 id="kujtimi">Kujtimi pas kësaj recete</h2>
+        <%- h.paragraphs(recipe.story) %>
+        <p class="signature">— <%= author %></p>
+      </section>
+    <% } %>
+
+    <section class="cook" id="gatimi">
+      <aside class="ingredients">
+        <h2>Përbërësit <% if (recipe.servings) { %><small>për <%= recipe.servings %> veta</small><% } %></h2>
+        <p class="hint">Shënoni me një klikim çfarë keni gati.</p>
+        <ul class="ingredient-list">
+          <% recipe.ingredients.forEach(function (line, i) { %>
+            <% if (h.isIngredientHeading(line)) { %>
+              <li class="sub"><%= line.replace(/:\s*$/, '') %></li>
+            <% } else { %>
+              <li><label><input type="checkbox" data-remember="i<%= i %>"><span><%= line %></span></label></li>
+            <% } %>
+          <% }) %>
+        </ul>
+      </aside>
+
+      <div>
+        <h2>Përgatitja <small><%= recipe.steps.length %> hapa</small></h2>
+        <label class="wake" data-wake><input type="checkbox"> Mbaje ekranin ndezur ndërsa gatuaj</label>
+        <p class="hint">Klikoni mbi një hap kur ta keni mbaruar.</p>
+        <ol class="steps">
+          <% recipe.steps.forEach(function (step, i) { %>
+            <li data-remember="s<%= i %>"><p><%= step %></p></li>
+          <% }) %>
+        </ol>
+      </div>
+    </section>
+
+    <% if (recipe.film && recipe.film.title) { %>
+      <aside class="pairing reveal">
+        <div class="pairing-poster"><%= recipe.film.title %></div>
+        <div>
+          <small>🎬 Filmi që i shkon kësaj gjelle</small>
+          <h3><%= recipe.film.title %><% if (recipe.film.year) { %> <span style="opacity:.6;font-weight:400">(<%= recipe.film.year %>)</span><% } %></h3>
+          <% if (recipe.film.note) { %><p><%= recipe.film.note %></p><% } else { %><p>Gatuajeni, shtroni tryezën dhe shijojeni me këtë film.</p><% } %>
+        </div>
+      </aside>
+    <% } %>
+
+    <% if (!isPreview) { %>
+    <section class="comments" id="komentet">
+      <h2>Çfarë thonë mysafirët <small style="font:500 1rem var(--ui);color:var(--ink-faint)">(<%= comments.length %>)</small></h2>
+
+      <% if (sent === 'ok') { %>
+        <div class="notice ok" role="status">Faleminderit për fjalët e ngrohta! Komenti juaj u publikua. 💛</div>
+      <% } %>
+
+      <% if (!comments.length) { %>
+        <p style="color:var(--ink-soft)">Ende asnjë koment — fjala e parë është e juaja!</p>
+      <% } %>
+
+      <% comments.forEach(function (c) { %>
+        <div class="comment" id="k-<%= c.id %>">
+          <div class="avatar" aria-hidden="true"><%= c.name.trim().charAt(0).toUpperCase() %></div>
+          <div>
+            <div class="comment-head"><b><%= c.name %></b><time datetime="<%= c.createdAt %>"><%= h.timeAgo(c.createdAt) %></time></div>
+            <div class="comment-text"><%= c.text %></div>
+            <% if (c.reply) { %>
+              <div class="reply"><b><%= author %> u përgjigj:</b><div class="comment-text"><%= c.reply.text %></div></div>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+
+      <form class="comment-form" id="shkruaj-koment" method="post" action="/receta/<%= recipe.slug %>/komento">
+        <h3>Lini një koment</h3>
+        <% if (sent === 'mungon') { %><div class="notice err" role="alert">Ju lutemi shkruani emrin dhe komentin.</div><% } %>
+        <% if (sent === 'shume') { %><div class="notice err" role="alert">Keni dërguar disa komente rresht. Provoni sërish pas pak minutash.</div><% } %>
+        <label class="field"><span>Emri juaj</span><input name="emri" maxlength="60" required autocomplete="name"></label>
+        <label class="field"><span>Komenti</span><textarea name="komenti" maxlength="2000" required placeholder="E provuat recetën? Ju solli ndonjë kujtim? Na tregoni…"></textarea></label>
+        <label class="honey" aria-hidden="true">Mos e plotësoni këtë fushë <input name="faqja" tabindex="-1" autocomplete="off"></label>
+        <input type="hidden" name="t" value="<%= formTime %>">
+        <button class="btn" type="submit">Dërgo komentin</button>
+      </form>
+    </section>
+    <% } %>
+  </div>
+</article>
+
+<% if (more.length && !isPreview) { %>
+  <section class="section more" style="background:var(--paper-2)">
+    <div class="wrap">
+      <div class="section-head"><div><span class="kicker">Në program</span><h2>Mund t’ju pëlqejë edhe…</h2></div></div>
+      <div class="tickets">
+        <% more.forEach(function (r) { %><%- include('../partials/ticket', { r: r }) %><% }) %>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<%- include('../partials/foot') %>
